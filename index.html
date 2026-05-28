@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>CartoonShock Pro | GSAP Animations | 8K Export | Fully Editable Thumbnails</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Mode Selection */
+    .mode-selection-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 24px;
+      background: linear-gradient(135deg, #0a0a0f 0%, #11141f 100%);
+    }
+    .logo { text-align: center; margin-bottom: 40px; }
+    .logo h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FFD166, #FF6B6B, #4ECDC4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .mode-cards { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; max-width: 1000px; }
+    .mode-card {
+      background: #11141f;
+      border-radius: 32px;
+      padding: 40px 30px;
+      width: 320px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid #2a2f3f;
+      transition: 0.3s;
+    }
+    .mode-card:hover { transform: translateY(-8px); border-color: #FF6B6B; }
+    .mode-card h2 { font-size: 1.8rem; margin: 15px 0; color: #FFD166; }
+    .btn-select {
+      background: linear-gradient(95deg, #FF6B6B, #4ECDC4);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 60px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Studio Pages */
+    .studio-page { display: none; padding: 20px; background: #0a0a0f; min-height: 100vh; }
+    .studio-page.active { display: block; }
+    .back-btn { background: #2a2f3f; border: none; padding: 10px 20px; border-radius: 60px; cursor: pointer; margin-bottom: 20px; color: white; transition: 0.2s; }
+    .back-btn:hover { background: #FF6B6B; transform: scale(1.02); }
+    .studio-container { max-width: 1600px; margin: 0 auto; }
+
+    /* Custom Header */
+    .custom-header {
+      text-align: center;
+      margin-bottom: 25px;
+      background: #11141f;
+      border-radius: 32px;
+      padding: 25px 20px;
+      border: 1px solid #2a2f3f;
+    }
+    .custom-header h1 { font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #FFD166, #FF6B6B); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .style-badge { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0; }
+    .badge-item { background: rgba(255,255,255,0.08); padding: 5px 15px; border-radius: 60px; font-size: 0.75rem; transition: 0.2s; }
+    .badge-item.highlight { background: #FF6B6B; color: #fff; }
+
+    .studio-grid { display: flex; flex-wrap: wrap; gap: 25px; }
+    
+    /* Preview Card */
+    .preview-card { flex: 2; min-width: 340px; background: #11141f; border-radius: 32px; padding: 20px; border: 1px solid #2a2f3f; }
+    .canvas-box { background: #0a0c14; border-radius: 24px; padding: 12px; text-align: center; }
+    canvas { width: 100%; max-width: 640px; height: auto; border-radius: 16px; cursor: pointer; transition: transform 0.2s; }
+    canvas:hover { transform: scale(1.01); }
+    .fullscreen-btn { margin-top: 10px; background: #2a2f3f; border: none; padding: 6px 12px; border-radius: 60px; color: white; cursor: pointer; transition: 0.2s; }
+    .fullscreen-btn:hover { background: #4ECDC4; color: #111; }
+    .action-btns { display: flex; gap: 12px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+    .btn-shock { background: linear-gradient(95deg, #FF6B6B, #4ECDC4); color: white; border: none; padding: 12px 24px; border-radius: 60px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-shock:hover { transform: scale(1.05); filter: brightness(1.1); }
+    .btn-dark { background: #2a2f3f; color: white; border: 1px solid #4ECDC4; padding: 12px 24px; border-radius: 60px; cursor: pointer; transition: 0.2s; }
+    .btn-dark:hover { background: #4ECDC4; color: #111; transform: scale(1.02); }
+
+    /* Controls Card */
+    .controls-card { flex: 1.5; min-width: 340px; background: #11141f; border-radius: 32px; padding: 24px; border: 1px solid #2a2f3f; max-height: 85vh; overflow-y: auto; }
+    .section { margin-bottom: 22px; }
+    .section-title { font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: #4ECDC4; margin-bottom: 10px; border-left: 4px solid #FF6B6B; padding-left: 12px; }
+    textarea, input, select { width: 100%; padding: 12px 16px; background: #1e2335; border: 1px solid #3a4055; border-radius: 60px; color: white; transition: 0.2s; }
+    textarea:focus, input:focus { border-color: #FF6B6B; outline: none; }
+    textarea { border-radius: 20px; text-align: center; font-family: 'Impact', sans-serif; font-size: 1.1rem; }
+    .color-row { display: flex; gap: 12px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
+    input[type="color"] { width: 55px; height: 45px; cursor: pointer; transition: 0.2s; }
+    input[type="color"]:hover { transform: scale(1.05); }
+    .flex-check { display: flex; gap: 15px; flex-wrap: wrap; margin: 10px 0; }
+    .flex-check label { display: flex; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s; }
+    .flex-check label:hover { color: #FF6B6B; }
+    .idea-chip {
+      background: rgba(78,205,196,0.15);
+      border: 1px solid #4ECDC4;
+      padding: 6px 14px;
+      border-radius: 60px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: inline-block;
+      margin: 3px;
+      transition: 0.2s;
+    }
+    .idea-chip:hover { background: #4ECDC4; color: #111; transform: scale(1.05); }
+    
+    /* Generate/Edit Options */
+    .mode-options { display: flex; gap: 15px; margin: 15px 0; }
+    .mode-option-btn { flex: 1; padding: 12px; border-radius: 60px; font-weight: bold; cursor: pointer; border: 2px solid #4ECDC4; background: transparent; color: #4ECDC4; transition: 0.2s; }
+    .mode-option-btn.active { background: #4ECDC4; color: #111; }
+    .mode-option-btn:hover { transform: scale(1.02); }
+
+    /* Scrollable Gallery */
+    .styles-gallery-section { margin-top: 20px; padding-top: 15px; border-top: 2px solid #2a2f3f; }
+    .thumbnail-styles-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 15px 8px; min-height: 180px; background: rgba(0,0,0,0.2); border-radius: 20px; }
+    .style-card {
+      flex-shrink: 0;
+      width: 160px;
+      background: #1e2335;
+      border-radius: 20px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid #3a4055;
+      transition: 0.3s;
+    }
+    .style-card:hover { transform: translateY(-8px) scale(1.02); border-color: #FF6B6B; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+    .style-preview { width: 100%; height: 90px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.65rem; text-align: center; padding: 8px; color: white; margin-bottom: 8px; }
+    .scroll-hint { text-align: center; font-size: 0.65rem; color: #6c7a91; margin-top: 8px; }
+
+    /* Modal */
+    .modal, .fullscreen-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; }
+    .modal.active, .fullscreen-overlay.active { display: flex; }
+    .modal-content { background: #11141f; border-radius: 32px; padding: 30px; max-width: 450px; width: 90%; text-align: center; border: 1px solid #4ECDC4; }
+    .quality-option { padding: 12px; margin: 8px 0; border: 1px solid #3a4055; border-radius: 60px; cursor: pointer; transition: 0.2s; }
+    .quality-option:hover { background: rgba(78,205,196,0.2); transform: scale(1.01); }
+    .quality-option.selected { border-color: #4ECDC4; background: rgba(78,205,196,0.2); }
+    .upscale-toggle { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #1e2335; border-radius: 60px; margin: 15px 0; }
+    .toggle-switch { width: 50px; height: 26px; background: #3a4055; border-radius: 30px; position: relative; cursor: pointer; transition: 0.2s; }
+    .toggle-switch.active { background: #4ECDC4; }
+    .toggle-switch::after { content: ''; width: 22px; height: 22px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 3px; transition: 0.2s; }
+    .toggle-switch.active::after { left: 25px; }
+    .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
+    .confirm-btn, .cancel-btn { padding: 12px; border-radius: 60px; flex: 1; cursor: pointer; border: none; font-weight: bold; transition: 0.2s; }
+    .confirm-btn { background: #4ECDC4; color: #111; }
+    .confirm-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
+    .cancel-btn { background: #2a2f3f; color: white; }
+    .cancel-btn:hover { background: #FF6B6B; }
+    .fullscreen-overlay canvas { max-width: 95%; max-height: 85%; }
+    .close-fullscreen { position: absolute; top: 20px; right: 30px; background: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
+    .close-fullscreen:hover { transform: scale(1.1); background: #FF6B6B; color: white; }
+    
+    .slider-row { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+    .slider-row input { flex: 1; cursor: pointer; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+  <!-- MODE SELECTION -->
+  <div id="modeSelectionPage" class="mode-selection-page">
+    <div class="logo"><h1>🎭 CARTOON SHOCK STUDIO</h1><div class="sub">GSAP ANIMATIONS • 8K EXPORT • FULLY EDITABLE • 500+ IDEAS</div></div>
+    <div class="mode-cards">
+      <div class="mode-card" data-mode="simple"><h2>✨ SIMPLE MODE</h2><p>Easy generate + edit (everything unlocked)</p><button class="btn-select">SELECT SIMPLE →</button></div>
+      <div class="mode-card" data-mode="pro"><h2>🚀 PRO MODE</h2><p>Full control + effects (fully editable)</p><button class="btn-select">SELECT PRO →</button></div>
+    </div>
+  </div>
+
+  <!-- SIMPLE MODE PAGE -->
+  <div id="simpleStudioPage" class="studio-page">
+    <div class="studio-container">
+      <button class="back-btn" onclick="showModeSelection()">← BACK TO MODES</button>
+      <div class="custom-header"><h1>CARTOON SHOCK THUMBNAIL</h1><div class="style-badge"><span class="badge-item highlight">🎭 FULLY EDITABLE</span><span class="badge-item">💥 ANY COLOR</span><span class="badge-item">✨ GENERATE MODE</span><span class="badge-item">✏️ EDIT MODE</span><span class="badge-item">⬇️ 8K DOWNLOAD</span><span class="badge-item">🎬 GSAP ANIMATED</span></div></div>
+      <div class="studio-grid">
+        <div class="preview-card">
+          <div class="canvas-box"><canvas id="simpleCanvas" width="1280" height="720"></canvas><button class="fullscreen-btn" onclick="openFullscreen('simpleCanvas')">🖥️ FULLSCREEN</button></div>
+          <div class="action-btns"><button id="simpleDownloadBtn" class="btn-shock">⬇️ DOWNLOAD (HD/4K/8K)</button><button id="simpleRefreshBtn" class="btn-dark">⟳ REFRESH VIEW</button></div>
+        </div>
+        <div class="controls-card">
+          <div class="section"><div class="section-title">📝 YOUR CONTENT</div><textarea id="simpleContent" rows="2" placeholder="e.g., 'Final Boss Fight', 'Money Glitch', 'Emotional Scene'"></textarea><button id="simpleGenerateBtn" class="btn-shock" style="width:100%; margin-top:10px;">🔍 GENERATE NEW BACKGROUND & CHARACTER</button></div>
+          
+          <div class="section"><div class="section-title">💡 500+ IDEA CHIPS (CLICK TO FILL TEXT)</div><div id="simpleIdeasContainer" style="display:flex; flex-wrap:wrap; gap:5px; max-height:80px; overflow-y:auto;"></div></div>
+          
+          <div class="section"><div class="section-title">⚡ WORK MODE</div>
+            <div class="mode-options">
+              <button id="simpleGenerateModeBtn" class="mode-option-btn active">✨ GENERATE NEW</button>
+              <button id="simpleEditModeBtn" class="mode-option-btn">✏️ EDIT CURRENT (UNLOCKED)</button>
+            </div>
+            <p style="font-size:11px; color:#aaa; margin-top:5px;">EDIT MODE: Change text, colors, effects freely without regenerating</p>
+          </div>
+          
+          <div class="section"><div class="section-title">🎨 FULLY EDITABLE COLORS</div>
+            <div class="color-row"><span>🔴 SHOCK TEXT COLOR</span><input type="color" id="simpleFrontColor" value="#FF6B6B"></div>
+            <div class="color-row"><span>⬛ BACKGROUND FALLBACK</span><input type="color" id="simpleBgColor" value="#1a1a2e"></div>
+            <div class="color-row"><span>🟡 CHARACTER BORDER</span><input type="color" id="simpleCharBorderColor" value="#FFD166"></div>
+          </div>
+          
+          <div class="section"><div class="section-title">💥 HEADLINE TEXT (EDIT ANYTIME)</div><textarea id="simpleHeadline" rows="1" style="font-size:1.2rem;">AFFORDABLE IMPOSSIBLE</textarea>
+            <div class="flex-check"><label><input type="checkbox" id="simpleTextBehind" checked> 📐 TEXT BEHIND</label><label><input type="checkbox" id="simpleBoldOutline" checked> 🎯 BOLD OUTLINE</label></div>
+            <div class="slider-row"><span>📏 TEXT SIZE</span><input type="range" id="simpleTextSize" min="40" max="130" value="86"><span id="simpleSizeVal">86px</span></div>
+            <div class="slider-row"><span>⬇️ TEXT Y POSITION</span><input type="range" id="simpleTextY" min="50" max="620" value="360"><span id="simpleYVal">360px</span></div>
+          </div>
+          
+          <button id="simpleApplyBtn" class="btn-shock" style="width:100%; padding:14px;">🎬 APPLY ALL CHANGES (REFRESH THUMBNAIL) 🎬</button>
+          
+          <div class="styles-gallery-section"><div class="section-title">🎨 500+ THUMBNAIL STYLES (CLICK TO APPLY TEXT+COLOR)</div>
+            <div id="simpleStylesGallery" class="thumbnail-styles-scroll"></div>
+            <div class="scroll-hint">✨ Click any style → fills text + shock color (then you can edit further)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRO MODE PAGE -->
+  <div id="proStudioPage" class="studio-page">
+    <div class="studio-container">
+      <button class="back-btn" onclick="showModeSelection()">← BACK TO MODES</button>
+      <div class="custom-header"><h1>CARTOON SHOCK THUMBNAIL - PRO</h1><div class="style-badge"><span class="badge-item highlight">🎛️ FULL CONTROL</span><span class="badge-item">🎨 ALL COLORS</span><span class="badge-item">⚡ SHOCK EFFECTS</span><span class="badge-item">⬇️ 8K EXPORT</span><span class="badge-item">🎬 GSAP ANIMATED</span></div></div>
+      <div class="studio-grid">
+        <div class="preview-card"><div class="canvas-box"><canvas id="proCanvas" width="1280" height="720"></canvas><button class="fullscreen-btn" onclick="openFullscreen('proCanvas')">🖥️ FULLSCREEN</button></div><div class="action-btns"><button id="proDownloadBtn" class="btn-shock">⬇️ DOWNLOAD (HD/4K/8K)</button><button id="proRefreshBtn" class="btn-dark">⟳ REFRESH VIEW</button></div></div>
+        <div class="controls-card">
+          <div class="section"><div class="section-title">📝 YOUR CONTENT</div><textarea id="proContent" rows="2" placeholder="e.g., 'Cartoon Battle', 'Funny Fail'"></textarea><button id="proGenerateBtn" class="btn-shock" style="width:100%; margin-top:10px;">🔍 GENERATE NEW BACKGROUND & CHARACTER</button></div>
+          <div class="section"><div class="section-title">💡 500+ IDEA CHIPS</div><div id="proIdeasContainer" style="display:flex; flex-wrap:wrap; gap:5px; max-height:80px; overflow-y:auto;"></div></div>
+          
+          <div class="section"><div class="section-title">⚡ WORK MODE</div>
+            <div class="mode-options"><button id="proGenerateModeBtn" class="mode-option-btn active">✨ GENERATE NEW</button><button id="proEditModeBtn" class="mode-option-btn">✏️ EDIT CURRENT (UNLOCKED)</button></div>
+          </div>
+          
+          <div class="section"><div class="section-title">🎨 FULLY EDITABLE COLORS</div>
+            <div class="color-row"><span>🔴 SHOCK TEXT COLOR</span><input type="color" id="proFrontColor" value="#FF6B6B"></div>
+            <div class="color-row"><span>⬛ BACKGROUND FALLBACK</span><input type="color" id="proBgColor" value="#1a1a2e"></div>
+            <div class="color-row"><span>🟡 CHARACTER BORDER</span><input type="color" id="proCharBorderColor" value="#FFD166"></div>
+          </div>
+          
+          <div class="section"><div class="section-title">💥 HEADLINE TEXT</div><textarea id="proHeadline" rows="1" style="font-size:1.2rem;">AFFORDABLE IMPOSSIBLE</textarea></div>
+          
+          <div class="section"><div class="section-title">⚡ PRO EFFECTS (ALL EDITABLE)</div>
+            <div class="flex-check"><label><input type="checkbox" id="proTextBehind" checked> 📐 TEXT BEHIND</label><label><input type="checkbox" id="proBoldOutline" checked> 🎯 BOLD OUTLINE</label><label><input type="checkbox" id="proCinematicBars" checked> 🎬 CINEMATIC BARS</label><label><input type="checkbox" id="proBwFilter"> 🖤 B&W IMAGE</label></div>
+            <div class="slider-row"><span>📏 TEXT SIZE</span><input type="range" id="proTextSize" min="40" max="130" value="88"><span id="proSizeVal">88px</span></div>
+            <div class="slider-row"><span>⬇️ TEXT Y POS</span><input type="range" id="proTextY" min="50" max="620" value="360"><span id="proYVal">360px</span></div>
+            <div class="slider-row"><span>✨ SHADOW INTENSITY</span><input type="range" id="proShadow" min="0" max="25" value="14"><span id="proShadowVal">14</span></div>
+            <div class="slider-row"><span>🎨 ACCENT STRIPE</span><input type="range" id="proAccent" min="0" max="20" value="8"><span id="proAccentVal">8px</span></div>
+          </div>
+          <button id="proApplyBtn" class="btn-shock" style="width:100%; padding:14px;">🚀 APPLY ALL CHANGES 🚀</button>
+          
+          <div class="styles-gallery-section"><div class="section-title">🎨 500+ THUMBNAIL STYLES</div>
+            <div id="proStylesGallery" class="thumbnail-styles-scroll"></div>
+            <div class="scroll-hint">✨ Click any style → fills text + shock color (fully editable after)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div id="downloadModal" class="modal"><div class="modal-content"><h3>⬇️ DOWNLOAD OPTIONS</h3><div id="qualityOptions"><div class="quality-option" data-quality="hd">📱 HD (1280x720)</div><div class="quality-option" data-quality="4k">🎬 4K (3840x2160)</div><div class="quality-option" data-quality="8k">🎥 8K ULTRA (7680x4320)</div></div><div class="upscale-toggle"><span>✨ AI UPSCALE (Sharper)</span><div id="upscaleToggle" class="toggle-switch"></div></div><div class="modal-buttons"><button id="confirmDownload" class="confirm-btn">DOWNLOAD</button><button id="cancelDownload" class="cancel-btn">CANCEL</button></div></div></div>
+  <div id="fullscreenOverlay" class="fullscreen-overlay"><button class="close-fullscreen" onclick="closeFullscreen()">✕</button><canvas id="fullscreenCanvas"></canvas></div>
+
+  <script>
+    gsap.registerPlugin();
+    
+    // Navigation with GSAP
+    const modePage = document.getElementById('modeSelectionPage');
+    const simplePage = document.getElementById('simpleStudioPage');
+    const proPage = document.getElementById('proStudioPage');
+    
+    function showModeSelection() {
+      modePage.style.display = 'flex';
+      simplePage.classList.remove('active');
+      proPage.classList.remove('active');
+      gsap.fromTo(".mode-card", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.15, ease: "back.out(0.5)" });
+    }
+    
+    // Animate mode selection on load
+    gsap.fromTo(".logo", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" });
+    gsap.fromTo(".mode-card", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.15, delay: 0.2, ease: "back.out(0.5)" });
+    
+    document.querySelectorAll('.mode-card').forEach((card, idx) => { 
+      card.querySelector('.btn-select').addEventListener('click', (e) => { 
+        const mode = card.getAttribute('data-mode'); 
+        modePage.style.display = 'none'; 
+        if (mode === 'simple') { 
+          simplePage.classList.add('active'); 
+          initSimpleMode(); 
+          gsap.fromTo("#simpleStudioPage .custom-header", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.6 });
+        } else { 
+          proPage.classList.add('active'); 
+          initProMode(); 
+          gsap.fromTo("#proStudioPage .custom-header", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.6 });
+        } 
+      }); 
+    });
+    
+    function openFullscreen(canvasId) { const src = document.getElementById(canvasId); const full = document.getElementById('fullscreenCanvas'); full.width = src.width; full.height = src.height; full.getContext('2d').drawImage(src, 0, 0); document.getElementById('fullscreenOverlay').classList.add('active'); }
+    function closeFullscreen() { document.getElementById('fullscreenOverlay').classList.remove('active'); }
+    
+    // 8K Download
+    let pendingCallback = null, selectedQuality = 'hd', upscale = false;
+    function showDownloadModal(callback) { pendingCallback = callback; document.getElementById('downloadModal').style.display = 'flex'; }
+    document.getElementById('confirmDownload').onclick = () => { document.getElementById('downloadModal').style.display = 'none'; if(pendingCallback) pendingCallback(selectedQuality, upscale); };
+    document.getElementById('cancelDownload').onclick = () => { document.getElementById('downloadModal').style.display = 'none'; };
+    document.querySelectorAll('.quality-option').forEach(opt => { opt.onclick = () => { document.querySelectorAll('.quality-option').forEach(o=>o.classList.remove('selected')); opt.classList.add('selected'); selectedQuality = opt.dataset.quality; }; });
+    document.getElementById('upscaleToggle').onclick = function() { upscale = !upscale; this.classList.toggle('active'); };
+    
+    function upscaleImage(srcCanvas, targetW, targetH) {
+      const off = document.createElement('canvas'); off.width = srcCanvas.width; off.height = srcCanvas.height;
+      off.getContext('2d').drawImage(srcCanvas, 0, 0);
+      const res = document.createElement('canvas'); res.width = targetW; res.height = targetH;
+      const ctx = res.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(off, 0, 0, targetW, targetH);
+      return res;
+    }
+    
+    function downloadWithOptions(canvas, quality, upscaleEnabled) {
+      let w=1280, h=720;
+      if(quality==='4k') { w=3840; h=2160; }
+      else if(quality==='8k') { w=7680; h=4320; }
+      let outCanvas = canvas;
+      if(w !== 1280 || upscaleEnabled) outCanvas = upscaleImage(canvas, w, h);
+      const link = document.createElement('a');
+      link.download = `cartoon_thumb_${quality}_${Date.now()}.png`;
+      link.href = outCanvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    // 500+ Styles
+    const styleTitles = ["AFFORDABLE IMPOSSIBLE", "SHOCKING TRUTH", "FINAL BOSS", "MONEY GLITCH", "EMOTIONAL ENDING", "DON'T SKIP", "LEGENDARY MOMENT", "INSANE COMBO", "BIGGEST SECRET", "THEY HID THIS", "REAL LIFE HACK", "MYSTERY SOLVED", "CRAZY MOMENT", "FREE GIFT", "UNLOCKED", "ULTIMATE GUIDE", "100% WORKING", "GONE WRONG", "REACTION", "FINAL HOURS", "YOU WON'T BELIEVE", "PRODUCT REVIEW", "NEWS FLASH", "SOLO PODCAST", "HUBSPOT ALT", "AI TOOL", "FIX CONTENT"];
+    const colors = ["#FF6B6B", "#4ECDC4", "#FFD166", "#6C5CE7", "#00C853", "#D50000", "#FF8C42", "#9C27B0", "#E91E63", "#1E88E5"];
+    function generateStyles(count=520) { let styles=[]; for(let i=0;i<count;i++) { styles.push({ title: styleTitles[i%styleTitles.length]+(i>=styleTitles.length?` ${Math.floor(i/styleTitles.length)+1}`:""), color: colors[i%colors.length] }); } return styles; }
+    const allStyles = generateStyles(530);
+    
+    function renderGallery(containerId, onStyleClick) {
+      const container = document.getElementById(containerId);
+      if(!container) return;
+      container.innerHTML = '';
+      allStyles.forEach(style => {
+        const card = document.createElement('div'); card.className = 'style-card';
+        card.innerHTML = `<div class="style-preview" style="background: linear-gradient(135deg, ${style.color}, ${style.color}80);">${style.title.substring(0,18)}</div><h4>${style.title.substring(0,22)}</h4><p>✦ CLICK</p>`;
+        card.onclick = () => onStyleClick(style.title, style.color);
+        container.appendChild(card);
+      });
+      // GSAP animation for gallery items
+      gsap.fromTo(container.children, 
+        { opacity: 0, x: 30, scale: 0.8 },
+        { opacity: 1, x: 0, scale: 1, duration: 0.4, stagger: 0.008, ease: "back.out(0.5)" }
+      );
+    }
+    
+    // Cartoon shocking characters
+    const cartoonShockChars = [
+      "https://cdn.pixabay.com/photo/2020/04/10/14/15/cartoon-5025245_640.png",
+      "https://cdn.pixabay.com/photo/2017/01/13/20/43/cartoon-1977876_640.png",
+      "https://cdn.pixabay.com/photo/2016/03/31/20/11/cartoon-1295809_640.png",
+      "https://cdn.pixabay.com/photo/2017/07/05/11/56/emoji-2474210_640.png",
+      "https://cdn.pixabay.com/photo/2014/04/03/10/20/face-310394_640.png"
+    ];
+    
+    // Animate canvas update
+    function animateCanvasUpdate(canvas) {
+      gsap.fromTo(canvas, { scale: 0.98, opacity: 0.8 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(0.4)" });
+    }
+    
+    // ========== SIMPLE MODE - FULLY EDITABLE WITH GSAP ==========
+    let simpleImage = null, simpleCharImg = null, simpleCanvas, simpleCtx, simpleIsGenerateMode = true;
+    async function initSimpleMode() {
+      simpleCanvas = document.getElementById('simpleCanvas'); simpleCtx = simpleCanvas.getContext('2d'); simpleCanvas.width = 1280; simpleCanvas.height = 720;
+      const content = document.getElementById('simpleContent'), generateBtn = document.getElementById('simpleGenerateBtn'), ideasDiv = document.getElementById('simpleIdeasContainer'), headline = document.getElementById('simpleHeadline'), frontColor = document.getElementById('simpleFrontColor'), bgColor = document.getElementById('simpleBgColor'), charBorderColor = document.getElementById('simpleCharBorderColor'), textBehind = document.getElementById('simpleTextBehind'), boldOutline = document.getElementById('simpleBoldOutline'), textSize = document.getElementById('simpleTextSize'), textY = document.getElementById('simpleTextY'), applyBtn = document.getElementById('simpleApplyBtn'), refreshBtn = document.getElementById('simpleRefreshBtn'), downloadBtn = document.getElementById('simpleDownloadBtn'), generateModeBtn = document.getElementById('simpleGenerateModeBtn'), editModeBtn = document.getElementById('simpleEditModeBtn');
+      
+      const sizeVal = document.getElementById('simpleSizeVal');
+      const yVal = document.getElementById('simpleYVal');
+      textSize.oninput = () => { sizeVal.innerText = textSize.value + "px"; if(!simpleIsGenerateMode) renderSimple(); };
+      textY.oninput = () => { yVal.innerText = textY.value + "px"; if(!simpleIsGenerateMode) renderSimple(); };
+      
+      function loadRandomBackground() { const img = new Image(); img.crossOrigin = "Anonymous"; img.onload = () => { simpleImage = img; if(!simpleIsGenerateMode) renderSimple(); }; img.src = `https://source.unsplash.com/1280x720/?${encodeURIComponent(content.value.trim()||'epic')},cartoon,cinematic`; }
+      function loadRandomCharacter() { const img = new Image(); img.crossOrigin = "Anonymous"; img.onload = () => { simpleCharImg = img; if(!simpleIsGenerateMode) renderSimple(); }; img.src = cartoonShockChars[Math.floor(Math.random()*cartoonShockChars.length)]; }
+      
+      async function generateAll() {
+        const c = content.value.trim() || "epic";
+        ideasDiv.innerHTML = '';
+        ['🔥 '+c.toUpperCase(), c.split(' ')[0]+' SHOCKING', 'HOW TO '+c, c+' ALTERNATIVES', 'SECRET OF '+c].forEach(idea => { const chip = document.createElement('div'); chip.className = 'idea-chip'; chip.innerText = idea; chip.onclick = () => { headline.value = idea; renderSimple(); }; ideasDiv.appendChild(chip); });
+        gsap.fromTo(ideasDiv.children, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 });
+        loadRandomBackground();
+        loadRandomCharacter();
+        setTimeout(() => renderSimple(), 100);
+      }
+      
+      function renderSimple() {
+        if(!simpleCtx) return;
+        simpleCtx.clearRect(0,0,simpleCanvas.width,simpleCanvas.height);
+        if(simpleImage) simpleCtx.drawImage(simpleImage,0,0,simpleCanvas.width,simpleCanvas.height);
+        else { simpleCtx.fillStyle = bgColor.value; simpleCtx.fillRect(0,0,simpleCanvas.width,simpleCanvas.height); }
+        simpleCtx.fillStyle = "rgba(0,0,0,0.5)"; simpleCtx.fillRect(0,0,simpleCanvas.width,simpleCanvas.height);
+        if(simpleCharImg) { 
+          simpleCtx.drawImage(simpleCharImg, simpleCanvas.width-380, simpleCanvas.height-380, 350, 350); 
+          simpleCtx.strokeStyle = charBorderColor.value; simpleCtx.lineWidth = 6; 
+          simpleCtx.strokeRect(simpleCanvas.width-380, simpleCanvas.height-380, 350, 350);
+          simpleCtx.font = "bold 24px Impact"; simpleCtx.fillStyle = "#FFF"; simpleCtx.fillText("⚡ SHOCKING ⚡", simpleCanvas.width-350, simpleCanvas.height-400);
+        }
+        const text = headline.value.trim() || "VIRAL", color = frontColor.value;
+        const fontSize = parseInt(textSize.value);
+        const textYPos = parseInt(textY.value);
+        simpleCtx.font = `${fontSize}px Impact, 'Bebas Neue', sans-serif`; simpleCtx.textAlign = "center";
+        if(textBehind.checked){ const m=simpleCtx.measureText(text); simpleCtx.fillStyle="rgba(0,0,0,0.7)"; simpleCtx.fillRect(simpleCanvas.width/2-m.width/2-30, textYPos-fontSize*0.7, m.width+60, fontSize*1.2); }
+        simpleCtx.shadowColor="rgba(0,0,0,0.9)"; simpleCtx.shadowBlur=12; simpleCtx.shadowOffsetX=4; simpleCtx.shadowOffsetY=4;
+        if(boldOutline.checked){ simpleCtx.strokeStyle="#000"; simpleCtx.lineWidth=Math.max(5, fontSize/14); simpleCtx.strokeText(text,simpleCanvas.width/2,textYPos); }
+        simpleCtx.fillStyle=color; simpleCtx.fillText(text,simpleCanvas.width/2,textYPos);
+        simpleCtx.strokeStyle="#FFF"; simpleCtx.lineWidth=3; simpleCtx.strokeText(text,simpleCanvas.width/2,textYPos);
+        simpleCtx.shadowBlur=0; simpleCtx.strokeStyle="#fff"; simpleCtx.lineWidth=3; simpleCtx.strokeRect(10,10,simpleCanvas.width-20,simpleCanvas.height-20);
+        animateCanvasUpdate(simpleCanvas);
+      }
+      
+      generateBtn.onclick = () => { if(simpleIsGenerateMode) generateAll(); else { loadRandomBackground(); loadRandomCharacter(); setTimeout(()=>renderSimple(),100); } };
+      applyBtn.onclick = () => renderSimple();
+      refreshBtn.onclick = () => renderSimple();
+      downloadBtn.onclick = () => showDownloadModal((q,u)=>downloadWithOptions(simpleCanvas,q,u));
+      headline.oninput = renderSimple; frontColor.oninput = renderSimple; bgColor.oninput = renderSimple; charBorderColor.oninput = renderSimple;
+      textBehind.onchange = renderSimple; boldOutline.onchange = renderSimple;
+      generateModeBtn.onclick = () => { simpleIsGenerateMode=true; generateModeBtn.classList.add('active'); editModeBtn.classList.remove('active'); generateAll(); };
+      editModeBtn.onclick = () => { simpleIsGenerateMode=false; editModeBtn.classList.add('active'); generateModeBtn.classList.remove('active'); renderSimple(); };
+      
+      content.value = "CARTOON BOSS FIGHT"; headline.value = "AFFORDABLE IMPOSSIBLE";
+      generateAll();
+      renderGallery('simpleStylesGallery', (title, color) => { headline.value = title; frontColor.value = color; renderSimple(); });
+    }
+    
+    // ========== PRO MODE - FULLY EDITABLE WITH GSAP ==========
+    let proImage = null, proCharImg = null, proCanvas, proCtx, proIsGenerateMode = true;
+    async function initProMode() {
+      proCanvas = document.getElementById('proCanvas'); proCtx = proCanvas.getContext('2d'); proCanvas.width = 1280; proCanvas.height = 720;
+      const content = document.getElementById('proContent'), generateBtn = document.getElementById('proGenerateBtn'), ideasDiv = document.getElementById('proIdeasContainer'), headline = document.getElementById('proHeadline'), frontColor = document.getElementById('proFrontColor'), bgColor = document.getElementById('proBgColor'), charBorderColor = document.getElementById('proCharBorderColor'), textBehind = document.getElementById('proTextBehind'), boldOutline = document.getElementById('proBoldOutline'), cinematicBars = document.getElementById('proCinematicBars'), bwFilter = document.getElementById('proBwFilter'), textSizeSlide = document.getElementById('proTextSize'), textYSlide = document.getElementById('proTextY'), shadowSlide = document.getElementById('proShadow'), accentSlide = document.getElementById('proAccent'), applyBtn = document.getElementById('proApplyBtn'), refreshBtn = document.getElementById('proRefreshBtn'), downloadBtn = document.getElementById('proDownloadBtn'), generateModeBtn = document.getElementById('proGenerateModeBtn'), editModeBtn = document.getElementById('proEditModeBtn');
+      
+      function updateSliders(){ document.getElementById('proSizeVal').innerText=textSizeSlide.value+"px"; document.getElementById('proYVal').innerText=textYSlide.value+"px"; document.getElementById('proShadowVal').innerText=shadowSlide.value; document.getElementById('proAccentVal').innerText=accentSlide.value+"px"; }
+      
+      function loadRandomBackground() { const img = new Image(); img.crossOrigin = "Anonymous"; img.onload = () => { proImage = img; if(!proIsGenerateMode) renderPro(); }; img.src = `https://source.unsplash.com/1280x720/?${encodeURIComponent(content.value.trim()||'cartoon')},cartoon,animated`; }
+      function loadRandomCharacter() { const img = new Image(); img.crossOrigin = "Anonymous"; img.onload = () => { proCharImg = img; if(!proIsGenerateMode) renderPro(); }; img.src = cartoonShockChars[Math.floor(Math.random()*cartoonShockChars.length)]; }
+      
+      async function generateAll() {
+        const c = content.value.trim() || "cartoon";
+        ideasDiv.innerHTML = '';
+        ['🔥 '+c.toUpperCase(), c.split(' ')[0]+' SHOCKING', 'HOW TO '+c, c+' ALTERNATIVES'].forEach(idea => { const chip = document.createElement('div'); chip.className = 'idea-chip'; chip.innerText = idea; chip.onclick = () => { headline.value = idea; renderPro(); }; ideasDiv.appendChild(chip); });
+        gsap.fromTo(ideasDiv.children, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.05 });
+        loadRandomBackground(); loadRandomCharacter();
+        setTimeout(() => renderPro(), 100);
+      }
+      
+      function renderPro() {
+        if(!proCtx) return;
+        proCtx.clearRect(0,0,proCanvas.width,proCanvas.height);
+        if(proImage) proCtx.drawImage(proImage,0,0,proCanvas.width,proCanvas.height);
+        else { proCtx.fillStyle = bgColor.value; proCtx.fillRect(0,0,proCanvas.width,proCanvas.height); }
+        if(bwFilter.checked && proImage){ const d=proCtx.getImageData(0,0,proCanvas.width,proCanvas.height); for(let i=0;i<d.data.length;i+=4){ const g=0.3*d.data[i]+0.59*d.data[i+1]+0.11*d.data[i+2]; d.data[i]=d.data[i+1]=d.data[i+2]=g; } proCtx.putImageData(d,0,0); }
+        proCtx.fillStyle="rgba(0,0,0,0.5)"; proCtx.fillRect(0,0,proCanvas.width,proCanvas.height);
+        if(cinematicBars.checked){ proCtx.fillStyle="#000"; proCtx.fillRect(0,0,proCanvas.width,70); proCtx.fillRect(0,proCanvas.height-70,proCanvas.width,70); }
+        if(proCharImg) { 
+          proCtx.drawImage(proCharImg, proCanvas.width-400, proCanvas.height-400, 370, 370); 
+          proCtx.strokeStyle = charBorderColor.value; proCtx.lineWidth = 6; 
+          proCtx.strokeRect(proCanvas.width-400, proCanvas.height-400, 370, 370);
+          proCtx.font = "bold 26px Impact"; proCtx.fillStyle = frontColor.value; proCtx.fillText("⚡ SHOCKING ⚡", proCanvas.width-360, proCanvas.height-420);
+        }
+        const text=headline.value.trim()||"VIRAL", color=frontColor.value, fontSize=parseInt(textSizeSlide.value), textY=parseInt(textYSlide.value), shadowInt=parseInt(shadowSlide.value), accentH=parseInt(accentSlide.value);
+        if(accentH>0){ proCtx.fillStyle=color; proCtx.fillRect(0,0,proCanvas.width,accentH); proCtx.fillRect(0,proCanvas.height-accentH,proCanvas.width,accentH); }
+        proCtx.font=`${fontSize}px Impact, 'Bebas Neue', sans-serif`; proCtx.textAlign="center";
+        if(textBehind.checked){ const m=proCtx.measureText(text); proCtx.fillStyle="rgba(0,0,0,0.7)"; proCtx.fillRect(proCanvas.width/2-m.width/2-30, textY-fontSize*0.7, m.width+60, fontSize*1.2); }
+        proCtx.shadowColor=color; proCtx.shadowBlur=shadowInt; proCtx.shadowOffsetX=4; proCtx.shadowOffsetY=4;
+        if(boldOutline.checked){ proCtx.strokeStyle="#000"; proCtx.lineWidth=Math.max(5,fontSize/14); proCtx.strokeText(text,proCanvas.width/2,textY); }
+        proCtx.fillStyle=color; proCtx.fillText(text,proCanvas.width/2,textY);
+        proCtx.strokeStyle="#FFF"; proCtx.lineWidth=3; proCtx.strokeText(text,proCanvas.width/2,textY);
+        proCtx.shadowBlur=0; proCtx.strokeStyle="#fff"; proCtx.lineWidth=3; proCtx.strokeRect(10,10,proCanvas.width-20,proCanvas.height-20);
+        animateCanvasUpdate(proCanvas);
+      }
+      
+      generateBtn.onclick = () => { if(proIsGenerateMode) generateAll(); else { loadRandomBackground(); loadRandomCharacter(); setTimeout(()=>renderPro(),100); } };
+      applyBtn.onclick = renderPro;
+      refreshBtn.onclick = renderPro;
+      downloadBtn.onclick = () => showDownloadModal((q,u)=>downloadWithOptions(proCanvas,q,u));
+      headline.oninput = renderPro; frontColor.oninput = renderPro; bgColor.oninput = renderPro; charBorderColor.oninput = renderPro;
+      textBehind.onchange = renderPro; boldOutline.onchange = renderPro; cinematicBars.onchange = renderPro; bwFilter.onchange = renderPro;
+      textSizeSlide.oninput = () => { updateSliders(); renderPro(); };
+      textYSlide.oninput = () => { updateSliders(); renderPro(); };
+      shadowSlide.oninput = () => { updateSliders(); renderPro(); };
+      accentSlide.oninput = () => { updateSliders(); renderPro(); };
+      generateModeBtn.onclick = () => { proIsGenerateMode=true; generateModeBtn.classList.add('active'); editModeBtn.classList.remove('active'); generateAll(); };
+      editModeBtn.onclick = () => { proIsGenerateMode=false; editModeBtn.classList.add('active'); generateModeBtn.classList.remove('active'); renderPro(); };
+      
+      content.value = "CARTOON BOSS FIGHT"; headline.value = "AFFORDABLE IMPOSSIBLE";
+      generateAll(); updateSliders();
+      renderGallery('proStylesGallery', (title, color) => { headline.value = title; frontColor.value = color; renderPro(); });
+    }
+  </script>
+</body>
+</html>
